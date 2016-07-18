@@ -14,8 +14,8 @@ import static site.kiselev.task.Task.ROOT_ID;
  */
 abstract public class State {
 
-    static final String TASK_DONE_SIGN   = "[X]";
-    static final String TASK_ACTIVE_SIGN = "[ ]";
+    static final String TASK_DONE_SIGN   = "☑";
+    static final String TASK_ACTIVE_SIGN = "☐";
 
 
     private Pattern p = Pattern.compile("^/([A-Za-z]+)(\\d+)?(\\s+.*)?$");

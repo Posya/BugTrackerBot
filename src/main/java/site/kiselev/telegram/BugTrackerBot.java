@@ -62,6 +62,9 @@ public final class BugTrackerBot {
             UserSession us = userSessionFactory.getUserSession(user.username());
 
             Result result = us.process(message.text());
+            if (result == null) {
+                throw new NullPointerException("Result is null");
+            }
             List<String> out = result.getOut();
             String[][] keyboard = result.getKeyboard();
 
@@ -70,8 +73,10 @@ public final class BugTrackerBot {
             sm.parseMode(ParseMode.Markdown);
 
             if (keyboard.length > 0) {
-                ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup(keyboard, false, true, false);
+                ReplyKeyboardMarkup keyboardMarkup = new ReplyKeyboardMarkup(keyboard, true, true, false);
                 sm.replyMarkup(keyboardMarkup);
+            } else {
+
             }
 
             SendResponse sendResponse = bot.execute(sm);
@@ -80,8 +85,8 @@ public final class BugTrackerBot {
             if (sendResponse.message() == null) {
                 logger.error("Can't send message: {}", sm);
             }
-        } catch (UserSessionFactory.UserSessionFactoryException e) {
-            logger.error("Can't get UserSession for user {}: {}", user, e);
+        } catch (Exception e) {
+            logger.error("Error in processing user {}\nmessage {}\n{}", user, message, e);
             logger.trace(Arrays.toString(e.getStackTrace()));
         }
 

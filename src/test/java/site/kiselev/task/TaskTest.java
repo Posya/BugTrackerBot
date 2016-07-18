@@ -3,11 +3,11 @@ package site.kiselev.task;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.Assert.*;
 import static site.kiselev.task.Task.REMINDER_NOT_SET;
+import static site.kiselev.task.Task.ROOT_ID;
 
 /**
  * Tests for Task class
@@ -17,13 +17,18 @@ public class TaskTest {
 
     @Before
     public void setUp() throws Exception {
+        Task root = new Task(ROOT_ID);
+
         task = new Task(1);
+        root.addSubTask(task);
 
         task.addSubTask(new Task(11));
         task.addSubTask(new Task(12).done());
         task.addSubTask(new Task(13));
 
         task.setSubj("task 1").setDescription("description 1");
+
+
     }
 
     @Test
@@ -234,7 +239,16 @@ public class TaskTest {
 
     @Test
     public void getSubTasksTest() throws Exception {
-        List<Task> subTasks = task.getSubTasks(State.ACTIVE);
+        Set<State> state = new HashSet<>();
+        state.add(State.ACTIVE);
+        List<Task> subTasks = task.getSubTasks(state);
         assertEquals(2, subTasks.size());
+    }
+
+    @Test
+    public void getParentsTest() throws Exception {
+        Task task1 = this.task.getSubTasks().get(2);
+        List<Task> parents = task1.getParents();
+        assertEquals(3, parents.size());
     }
 }

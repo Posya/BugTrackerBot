@@ -32,10 +32,10 @@ public class ListStateTest {
         String[][] keyboard = result.getKeyboard();
         assertEquals("*Task1* /detail1", out.get(0));
         assertEquals("", out.get(1));
-        assertEquals("[ ] Task11 /done11 /list11", out.get(2));
-        assertEquals("[ ] Task12 /done12 /list12", out.get(3));
-        assertEquals("[ ] Task13 /done13 /list13", out.get(4));
-        assertEquals("[ ] Task14 /done14 /list14", out.get(5));
+        assertEquals("☐ Task11 /list11", out.get(2));
+        assertEquals("☐ Task12 /list12", out.get(3));
+        assertEquals("☐ Task13 /list13", out.get(4));
+        assertEquals("☐ Task14 /list14", out.get(5));
         assertEquals(6, out.size());
         String[][] expected = {{"/new", "/find", "/reminders"},{"/main"}};
         assertTrue(Arrays.deepEquals(expected, keyboard));

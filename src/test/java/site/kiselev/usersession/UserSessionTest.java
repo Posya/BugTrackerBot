@@ -85,7 +85,7 @@ public class UserSessionTest {
             keyboard = result.getKeyboard();
             assertEquals("*Tasks:*", out.get(0));
             assertEquals("", out.get(1));
-            Pattern p = Pattern.compile(".*\\D(\\d+)\\D.*");
+            Pattern p = Pattern.compile(".*\\D(\\d+)$");
             Matcher m = p.matcher(out.get(2));
             assertTrue(m.matches());
             long newID = Long.parseLong(m.group(1));
@@ -154,7 +154,7 @@ public class UserSessionTest {
             String[][] keyboard = result.getKeyboard();
             assertEquals("*Tasks:*", out.get(0));
             assertEquals("", out.get(1));
-            Pattern p = Pattern.compile(".*\\D(\\d+)\\D.*");
+            Pattern p = Pattern.compile(".*\\D(\\d+)$");
             Matcher m = p.matcher(out.get(2));
             assertTrue(m.matches());
             long newID = Long.parseLong(m.group(1));

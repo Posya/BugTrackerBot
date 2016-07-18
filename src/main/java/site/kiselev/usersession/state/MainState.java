@@ -26,13 +26,12 @@ class MainState extends State {
         out.add("");
 
         out.addAll(
-                config.getTask(ROOT_ID).getSubTasks().stream()
+                config.getTask(ROOT_ID).getSubTasks(config.getShowState()).stream()
                         .map(st ->
                                 String.format(
-                                        "%s %s /done%d /list%d",
+                                        "%s %s /list%d",
                                         (st.getState() == site.kiselev.task.State.DONE ? TASK_DONE_SIGN : TASK_ACTIVE_SIGN),
                                         st.getSubj(),
-                                        st.getId(),
                                         st.getId()
                                 ))
                         .collect(Collectors.toList()));

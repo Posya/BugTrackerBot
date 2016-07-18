@@ -6,6 +6,7 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -27,6 +28,7 @@ public class Task {
     private long reminder = REMINDER_NOT_SET;
 
     transient private Consumer<Task> saver;
+    transient private Task root;
 
     /**
      * Default constructor
@@ -37,6 +39,7 @@ public class Task {
     public Task(long id, List<Task> subTasks) {
         this.id = id;
         this.subTasks = subTasks;
+        if (id == ROOT_ID) setRoot(this);
     }
 
     /**
@@ -121,10 +124,32 @@ public class Task {
      *
      * @return  - @{@link List} of @{@link Task}
      */
-    public List<Task> getSubTasks(State state) {
+    public List<Task> getSubTasks(Set<State> states) {
         return subTasks.stream()
-                .filter(t -> t.getState() == state)
+                .filter(t -> states.contains(t.getState()))
                 .collect(Collectors.toList());
+    }
+
+    private List<Task> getParents(long id) {
+        if (this.getId() == id) {
+            List<Task> result = new ArrayList<>();
+            result.add(this);
+            return result;
+        } else {
+            for (Task task : getSubTasks()) {
+                List<Task> parents = task.getParents(id);
+                if (parents != null) {
+                    parents.add(0, this);
+                    return parents;
+                }
+            }
+            return null;
+        }
+    }
+
+    public List<Task> getParents() {
+        if (root == null) throw new NullPointerException("root is null");
+        return root.getParents(this.id);
     }
 
     /**
@@ -139,6 +164,7 @@ public class Task {
             throw new IllegalStateException(String.format("Can't add task %s to %s", task, this));
         this.subTasks.add(task);
         task.setSaver(this.saver);
+        task.setRoot(this.root);
         return this;
     }
 
@@ -153,6 +179,8 @@ public class Task {
         if (list.stream().anyMatch(t -> !isCanBeAdded(t)))
             throw new IllegalStateException(String.format("Can't add tasks %s to %s", list, this));
         this.subTasks.addAll(list);
+        list.forEach(t -> t.setSaver(this.saver));
+        list.forEach(t -> t.setRoot(this.root));
         return this;
     }
 
@@ -306,6 +334,7 @@ public class Task {
 
     public List<Task> findByName(String query) {
         List<Task> result = new ArrayList<>();
+        if (query == null) return result;
         if (this.subj.contains(query)) result.add(this);
         for (Task t : getSubTasks()) result.addAll(t.findByName(query));
         return result;
@@ -322,6 +351,9 @@ public class Task {
         } catch (JsonSyntaxException | NullPointerException e) {
             throw new JsonSyntaxException("Error in JSON parsing", e);
         }
+
+        if (result.getId() == ROOT_ID) result.setRoot(result);
+
         return result;
     }
 
@@ -443,5 +475,16 @@ public class Task {
     public void save() {
         if (saver == null) throw new NullPointerException("Saver was not set");
         saver.accept(this);
+    }
+
+    public Task getRoot() {
+        return root;
+    }
+
+    private void setRoot(Task root) {
+        this.root = root;
+        for (Task task : subTasks) {
+            task.setRoot(root);
+        }
     }
 }
