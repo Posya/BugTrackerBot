@@ -11,3 +11,5 @@ gradle-app.setting
 
 /classes/
 
+src/main/java/site/kiselev/Config.java
+
