@@ -3,6 +3,7 @@ package site.kiselev.datastore;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
+import redis.clients.jedis.exceptions.JedisConnectionException;
 
 import java.util.Arrays;
 
@@ -11,7 +12,16 @@ import java.util.Arrays;
  */
 public class RedisDatastore implements Datastore {
 
-    private JedisPool pool = new JedisPool(new JedisPoolConfig(), "localhost");
+    private JedisPool pool;
+
+    public RedisDatastore() {
+        pool = new JedisPool(new JedisPoolConfig(), "localhost");
+        try (Jedis jedis = pool.getResource()) {
+            jedis.ping();
+        } catch (JedisConnectionException e) {
+            throw new RuntimeException("Can't connect to Redis", e);
+        }
+    }
 
 
     @Override
