@@ -15,6 +15,7 @@ import static site.kiselev.task.Task.ROOT_ID;
 /**
  * Tests for List State
  */
+@SuppressWarnings("FieldCanBeLocal")
 public class ListStateTest {
     private Config config;
     private ListState ls;
@@ -30,14 +31,14 @@ public class ListStateTest {
         Result result = ls.getResult();
         List<String> out = result.getOut();
         String[][] keyboard = result.getKeyboard();
-        assertEquals("*Task1* /detail1", out.get(0));
+        assertEquals("*Tasks:*", out.get(0));
         assertEquals("", out.get(1));
         assertEquals("☐ Task11 /list11", out.get(2));
         assertEquals("☐ Task12 /list12", out.get(3));
         assertEquals("☐ Task13 /list13", out.get(4));
         assertEquals("☐ Task14 /list14", out.get(5));
         assertEquals(6, out.size());
-        String[][] expected = {{"/new", "/find", "/reminders"},{"/main"}};
+        String[][] expected = {{"/new", "/find", "/reminders"}};
         assertTrue(Arrays.deepEquals(expected, keyboard));
     }
 

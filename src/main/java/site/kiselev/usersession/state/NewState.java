@@ -64,7 +64,7 @@ class NewState extends State {
         switch (currentState) {
             case SUBJ:
                 if (input.startsWith("/cancel")) {
-                    newState = returnTo(id);
+                    newState = new ListState(config, id);
                 } else {
                     subj = input;
                     currentState = CurrentState.DESC;
@@ -73,7 +73,7 @@ class NewState extends State {
                 break;
             case DESC:
                 if (input.startsWith("/cancel")) {
-                    newState = returnTo(id);
+                    newState = new ListState(config, id);
                 } else if (input.startsWith("/skip")) {
                     desc = "";
                     currentState = CurrentState.DONE;
@@ -86,21 +86,17 @@ class NewState extends State {
                 break;
             case DONE:
                 if (input.startsWith("/cancel")) {
-                    newState = returnTo(id);
+                    newState = new ListState(config, id);
                 } else if (input.startsWith("/ok")) {
                     long timestamp = new Date().getTime();
 
                     config.getTask(id).addSubTask(
                             new Task(timestamp).setSubj(subj).setDescription(desc)
                     ).save();
-                    newState = returnTo(id);
+                    newState = new ListState(config, id);
                 }
                 break;
         }
         return newState;
-    }
-
-    private State returnTo(long id) {
-        return id == ROOT_ID ? new MainState(config) : new ListState(config, id);
     }
 }

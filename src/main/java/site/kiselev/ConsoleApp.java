@@ -32,7 +32,7 @@ public class ConsoleApp {
         while (!isExit) {
             Scanner scanner = new Scanner(System.in);
             System.out.print(">>> ");
-            String input = scanner.next();
+            String input = scanner.nextLine();
             processUpdate(input);
         }
         logger.debug("Stopping loop");

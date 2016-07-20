@@ -11,7 +11,7 @@ public class StateTest {
     @Test
     public void initState() throws Exception {
         State state = State.initState(null);
-        assertTrue(state instanceof MainState);
+        assertTrue(state instanceof ListState);
     }
 
 

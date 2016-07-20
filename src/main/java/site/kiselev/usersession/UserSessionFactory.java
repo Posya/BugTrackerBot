@@ -3,7 +3,6 @@ package site.kiselev.usersession;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import com.pengrad.telegrambot.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import site.kiselev.Config;
@@ -24,7 +23,7 @@ public class UserSessionFactory {
 
     private final Logger logger = LoggerFactory.getLogger(UserSessionFactory.class);
 
-    public class UserSessionFactoryException extends Exception {
+    private class UserSessionFactoryException extends Exception {
         UserSessionFactoryException(Exception e) {
             super(e);
         }

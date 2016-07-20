@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static site.kiselev.task.Task.ROOT_ID;
+
 /**
  * List State implementation
  */
@@ -20,10 +22,14 @@ class ListState extends State {
     @Override
     Result getResult() {
         Task task = config.getTask(id);
-
         List<String> out = new ArrayList<>();
 
-        out.add(String.format("*%s* /detail%d", task.getSubj(), task.getId()));
+        if (id == ROOT_ID) {
+            out.add("*Tasks:*");
+        } else {
+            out.add(String.format("*%s* /detail", task.getSubj()));
+        }
+
         out.add("");
         out.addAll(
                 task.getSubTasks(config.getShowState()).stream()
@@ -37,7 +43,12 @@ class ListState extends State {
 
         if (out.size() == 2) out.add("No sub tasks");
 
-        String[][] keyboard = new String[][]{{"/new", "/find", "/reminders"},{"/main"}};
+        String[][] keyboard;
+        if (id == ROOT_ID) {
+            keyboard = new String[][]{{"/new", "/find", "/reminders"}};
+        } else {
+            keyboard = new String[][]{{"/new", "/find", "/reminders"},{"/main"}};
+        }
         return new Result(out, keyboard);
     }
 

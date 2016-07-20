@@ -334,7 +334,7 @@ public class Task {
 
     public List<Task> findByName(String query) {
         List<Task> result = new ArrayList<>();
-        if (query == null) return result;
+        if (query == null || query.isEmpty()) return result;
         if (this.subj.contains(query)) result.add(this);
         for (Task t : getSubTasks()) result.addAll(t.findByName(query));
         return result;

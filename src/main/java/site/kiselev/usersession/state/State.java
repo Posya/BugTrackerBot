@@ -36,7 +36,7 @@ abstract public class State {
      * @return          - initial state
      */
     public static State initState(Config config) {
-        return new MainState(config);
+        return new ListState(config, ROOT_ID);
     }
 
     public Pair<State, Result> apply(String input) {
@@ -61,16 +61,17 @@ abstract public class State {
             } catch (NumberFormatException ignored) {}
         }
 
+        if (config.getTask(cmdID) == null) return new WrongState(this);
+
         String cmd = m.group(1).toLowerCase();
-        String args = m.group(3);
+        String args = m.group(3) == null ? "" : m.group(3).trim();
 
         switch (cmd) {
         // Can be done with id = ROOT_ID
             case "main":
-                return new MainState(config);
+                return new ListState(config, ROOT_ID);
             case "list":
-                if (cmdID == ROOT_ID) return new MainState(config);
-                else return new ListState(config, cmdID);
+                return new ListState(config, cmdID);
             case "new":
                 return new NewState(config, cmdID, args);
             case "reminders":
