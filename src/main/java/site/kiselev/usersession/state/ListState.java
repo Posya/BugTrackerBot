@@ -1,5 +1,6 @@
 package site.kiselev.usersession.state;
 
+import com.google.common.base.Strings;
 import site.kiselev.task.Task;
 import site.kiselev.usersession.Config;
 import site.kiselev.usersession.Result;
@@ -27,7 +28,19 @@ class ListState extends State {
         if (id == ROOT_ID) {
             out.add("*Tasks:*");
         } else {
-            out.add(String.format("*%s* /detail", task.getSubj()));
+            List<Task> parents = task.getParents();
+            int i = 0;
+            out.add("*Tasks:* /main");
+            for (Task t : parents) {
+                out.add(String.format("%s %s %s /list%d",
+                        Strings.repeat(" ", i) + ">",
+                        (t.getState() == site.kiselev.task.State.DONE ? TASK_DONE_SIGN : TASK_ACTIVE_SIGN),
+                        t.getSubj(),
+                        t.getId()));
+                i++;
+            }
+
+            //out.add(String.format("*%s* /detail", task.getSubj()));
         }
 
         out.add("");

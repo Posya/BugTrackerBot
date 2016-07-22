@@ -78,7 +78,8 @@ abstract public class State {
                 return new RemindersState(config);
             case "find":
                 return new FindState(config, args);
-
+            case "tree":
+                return new TreeState(config, cmdID);
         // Can't be done with id = ROOT_ID
             default:
                 if (cmdID == ROOT_ID) return new WrongState(this);

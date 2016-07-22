@@ -139,7 +139,8 @@ public class Task {
             for (Task task : getSubTasks()) {
                 List<Task> parents = task.getParents(id);
                 if (parents != null) {
-                    parents.add(0, this);
+                    // Skip root
+                    if (this.id != ROOT_ID) parents.add(0, this);
                     return parents;
                 }
             }
@@ -220,6 +221,7 @@ public class Task {
         checkState(state);
         setSubStates(state);
         this.state = state;
+        save();
         return this;
     }
 
