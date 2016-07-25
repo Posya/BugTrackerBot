@@ -203,10 +203,11 @@ public class UserSessionTest {
             result = us.process("/ok");
             out = result.getOut();
             keyboard = result.getKeyboard();
-            assertEquals("*New Subject* /detail" + newID, out.get(0));
-            assertEquals("", out.get(1));
+            assertEquals("*Tasks:* /main", out.get(0));
+            assertEquals("> ☐ New Subject /list" + newID, out.get(1));
+            assertEquals("", out.get(2));
             p = Pattern.compile(".*\\D(\\d+)$");
-            m = p.matcher(out.get(0));
+            m = p.matcher(out.get(1));
             assertTrue(m.matches());
             newID = Long.parseLong(m.group(1));
             expected = new String[][]{{"/new", "/find", "/reminders"},{"/main"}};

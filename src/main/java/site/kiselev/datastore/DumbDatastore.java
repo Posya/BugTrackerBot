@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * DumbDatastore
@@ -30,5 +31,20 @@ public class DumbDatastore implements Datastore {
     public void set(String[] key, String value) {
         logger.trace("Setting key {} = {}\nstore: {}", key, value, store);
         store.put(key, value);
+    }
+
+    @Override
+    public Set<String> zRangeLessThen(String[] key, long score) {
+        return null;
+    }
+
+    @Override
+    public void zRem(String[] key, String value) {
+
+    }
+
+    @Override
+    public void zAdd(String[] key, long score, String value) {
+
     }
 }

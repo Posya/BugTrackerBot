@@ -3,6 +3,8 @@ package site.kiselev;
 import com.google.common.base.Joiner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import site.kiselev.datastore.Datastore;
+import site.kiselev.datastore.RedisDatastore;
 import site.kiselev.usersession.Result;
 import site.kiselev.usersession.UserSession;
 import site.kiselev.usersession.UserSessionFactory;
@@ -18,13 +20,15 @@ public class ConsoleApp {
     private static final String USERNAME = "pavel_kiselev";
     private final Logger logger = LoggerFactory.getLogger(ConsoleApp.class);
     private final UserSessionFactory userSessionFactory;
+    private final Datastore datastore;
 
     @SuppressWarnings("FieldCanBeLocal")
     private boolean isExit = false;
 
     private ConsoleApp() {
         logger.debug("Creating new BugTrackerBot");
-        userSessionFactory = new UserSessionFactory();
+        datastore = new RedisDatastore();
+        userSessionFactory = new UserSessionFactory(datastore);
     }
 
     private void loop() {

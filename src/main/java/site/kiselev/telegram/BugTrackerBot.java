@@ -17,12 +17,17 @@ import com.pengrad.telegrambot.response.SendResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import site.kiselev.Config;
+import site.kiselev.datastore.Datastore;
+import site.kiselev.datastore.RedisDatastore;
 import site.kiselev.usersession.Result;
 import site.kiselev.usersession.UserSession;
 import site.kiselev.usersession.UserSessionFactory;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Class for telegram bot
@@ -36,22 +41,51 @@ public final class BugTrackerBot {
 
     private final Logger logger = LoggerFactory.getLogger(BugTrackerBot.class);
     private final UserSessionFactory userSessionFactory;
+    private final Datastore datastore;
 
 
     public BugTrackerBot() {
         logger.debug("Creating new BugTrackerBot");
         bot = TelegramBotAdapter.build(Config.TELEGRAM_BOT_API_TOKEN);
-        userSessionFactory = new UserSessionFactory();
+        datastore = new RedisDatastore();
+        userSessionFactory = new UserSessionFactory(datastore);
     }
 
+    /**
+     * Main loop
+     */
     public void loop() {
         logger.debug("Starting loop");
+
+        // Starting reminder thread
+        ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
+        Runnable task = new ReminderRunnable(bot, datastore);
+        executor.scheduleWithFixedDelay(task, 0, 30, TimeUnit.SECONDS);
+
+        // Main loop
         while (!isExit) {
             GetUpdatesResponse updatesResponse = bot.execute(
                     new GetUpdates().offset(lastUpdateId));
             updatesResponse.updates().forEach(this::processUpdate);
         }
+
         logger.debug("Stopping loop");
+
+        try {
+            logger.debug("Attempt to shutdown executor");
+            executor.shutdown();
+            executor.awaitTermination(5, TimeUnit.SECONDS);
+        }
+        catch (InterruptedException e) {
+            logger.error("Tasks interrupted");
+        }
+        finally {
+            if (!executor.isTerminated()) {
+                logger.error("Cancel non-finished tasks");
+            }
+            executor.shutdownNow();
+            logger.debug("Shutdown finished");
+        }
     }
 
     private void processUpdate(Update update) {

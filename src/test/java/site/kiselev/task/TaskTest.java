@@ -154,11 +154,11 @@ public class TaskTest {
 
     @Test
     public void isRemind() throws Exception {
-        assertFalse(task.isItIsTime(12345679));
+        assertFalse(task.isItTime(12345679));
         task.setReminder(12345678);
-        assertTrue(task.isItIsTime(12345679));
+        assertTrue(task.isItTime(12345679));
         task.clearReminder();
-        assertFalse(task.isItIsTime(12345679));
+        assertFalse(task.isItTime(12345679));
     }
 
     @Test
@@ -249,6 +249,15 @@ public class TaskTest {
     public void getParentsTest() throws Exception {
         Task task1 = this.task.getSubTasks().get(2);
         List<Task> parents = task1.getParents();
-        assertEquals(3, parents.size());
+        assertEquals(2, parents.size());
+    }
+
+    @Test
+    public void getRemindersTest() throws Exception {
+        task.findByID(11).setReminder(100);
+        task.findByID(12).setReminder(14694505460970L);
+        task.findByID(13).setReminder(200);
+        Map<Long, Task> reminders = task.getReminders();
+        assertEquals(2, reminders.size());
     }
 }

@@ -4,9 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -221,7 +219,6 @@ public class Task {
         checkState(state);
         setSubStates(state);
         this.state = state;
-        save();
         return this;
     }
 
@@ -312,7 +309,7 @@ public class Task {
      * @param timestamp - timestamp to check
      * @return          - @true if it's time
      */
-    public boolean isItIsTime(double timestamp) {
+    public boolean isItTime(double timestamp) {
         return isReminderSet() && reminder < timestamp;
     }
 
@@ -410,7 +407,7 @@ public class Task {
      * @return  - @long of new unique ID
      */
     private static long generateID() {
-        //TODO: Реализовать
+        //Реализовывать нет необходимости, метод не нужен.
         throw new NotImplementedException();
     }
 
@@ -488,5 +485,24 @@ public class Task {
         for (Task task : subTasks) {
             task.setRoot(root);
         }
+    }
+
+    public List<Task> asList() {
+        List<Task> result = new ArrayList<>();
+        result.add(this);
+        for (Task t : subTasks) result.addAll(t.asList());
+        return result;
+    }
+
+    private Map<Long, Task> getRemindersRecursive() {
+        Map<Long, Task> result = new TreeMap<>();
+        long timestamp = new Date().getTime();
+        if (isItTime(timestamp)) result.put(getReminder(), this);
+        for (Task t : subTasks) result.putAll(t.getRemindersRecursive());
+        return result;
+    }
+
+    public Map<Long, Task> getReminders() {
+        return root.getRemindersRecursive();
     }
 }

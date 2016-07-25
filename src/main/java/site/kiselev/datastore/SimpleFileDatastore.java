@@ -4,7 +4,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -57,5 +57,20 @@ public class SimpleFileDatastore implements Datastore {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public Set<String> zRangeLessThen(String[] key, long score) {
+        return null;
+    }
+
+    @Override
+    public void zRem(String[] key, String value) {
+
+    }
+
+    @Override
+    public void zAdd(String[] key, long score, String value) {
+
     }
 }

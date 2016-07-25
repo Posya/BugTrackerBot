@@ -95,16 +95,16 @@ abstract public class State {
                     default:
                         switch (cmd) {
                             case "done":
-                                config.getTask(cmdID).done();
+                                config.getTask(cmdID).done().save();
                                 break;
                             case "undone":
-                                config.getTask(cmdID).undone();
+                                config.getTask(cmdID).undone().save();
                                 break;
                             case "archive":
-                                config.getTask(cmdID).archive();
+                                config.getTask(cmdID).archive().save();
                                 break;
                             case "unarchive":
-                                config.getTask(cmdID).unarchive();
+                                config.getTask(cmdID).unarchive().save();
                                 break;
 
                 // No matches. Wrong State

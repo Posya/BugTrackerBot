@@ -7,6 +7,8 @@ import site.kiselev.datastore.Datastore;
 import site.kiselev.task.Task;
 import site.kiselev.usersession.state.State;
 
+import static site.kiselev.telegram.Reminder.REMINDERS_KEY;
+
 /**
  * Class for UserSession keeping
  */
@@ -21,14 +23,19 @@ public class UserSession {
         logger.trace("Creating new UserSession for user {}", username);
         this.username = username;
         String json = datastore.get(new String[]{username, "tasks"});
-        //TODO: Сделать работу с кэшем - надо ли?
         Task task;
         {
             task = Task.fromJSON(json);
             if (task == null) task = new Task(Task.ROOT_ID);
         }
         Task finalTask = task;
-        task.setSaver(t -> datastore.set(new String[]{username, "tasks"}, finalTask.toJSON()));
+        task.setSaver(t -> {
+            datastore.set(new String[]{username, "tasks"}, finalTask.toJSON());
+            if (t.isReminderSet()) datastore.zAdd(REMINDERS_KEY,
+                    t.getReminder(),
+                    "Reminder:\n" + t.getSubj()
+            );
+        });
         Config config = new Config(finalTask::findByID);
         state = State.initState(config);
     }

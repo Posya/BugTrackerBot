@@ -19,7 +19,7 @@ import java.util.concurrent.ExecutionException;
 public class UserSessionFactory {
 
     private LoadingCache<String, UserSession> cache;
-    private Datastore datastore = new RedisDatastore();
+    private Datastore datastore;
 
     private final Logger logger = LoggerFactory.getLogger(UserSessionFactory.class);
 
@@ -29,7 +29,7 @@ public class UserSessionFactory {
         }
     }
 
-    public UserSessionFactory() {
+    public UserSessionFactory(Datastore datastore) {
         logger.debug("Creating new UserSessionFactory");
         CacheLoader<String, UserSession> loader = new CacheLoader<String, UserSession>() {
             @Override
@@ -37,13 +37,15 @@ public class UserSessionFactory {
                 return new UserSession(datastore, username);
             }
         };
+        this.datastore = datastore;
         cache = CacheBuilder.newBuilder()
                 .expireAfterAccess(Config.EXPIRE_AFTER_TIMEOUT, Config.EXPIRE_AFTER_TIMEOUT_TIME_UNIT)
                 .build(loader);
     }
 
-    public UserSessionFactory(CacheLoader<String, UserSession> otherLoader) {
+    public UserSessionFactory(Datastore datastore, CacheLoader<String, UserSession> otherLoader) {
         logger.debug("Creating new UserSessionFactory with custom loader");
+        this.datastore = datastore;
         cache = CacheBuilder.newBuilder()
                 .expireAfterAccess(Config.EXPIRE_AFTER_TIMEOUT, Config.EXPIRE_AFTER_TIMEOUT_TIME_UNIT)
                 .build(otherLoader);

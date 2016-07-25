@@ -31,8 +31,7 @@ public class WrongStateTest {
         List<String> out = result.getOut();
         String[][] keyboard = result.getKeyboard();
         assertEquals("*Wrong command!*", out.get(0));
-        assertEquals("", out.get(1));
-        assertEquals(7, out.size());
+        assertEquals(1, out.size());
     }
 
     @Test

@@ -2,6 +2,7 @@ package site.kiselev.usersession.state;
 
 import site.kiselev.usersession.Result;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -10,21 +11,15 @@ import java.util.List;
 class WrongState extends State {
 
 
-    private State callerState;
-
     WrongState(State callerState) {
         super(callerState.config, callerState.id);
-        this.callerState = callerState;
     }
 
     @Override
     Result getResult() {
-        Result result = callerState.getResult();
-        List<String> out = result.getOut();
-        String[][] keyboard = result.getKeyboard();
+        List<String> out = new ArrayList<>();
         out.add(0, "*Wrong command!*");
-        out.add(1, "");
-        return new Result(out, keyboard);
+        return new Result(out, new String[][]{});
     }
 
 }
