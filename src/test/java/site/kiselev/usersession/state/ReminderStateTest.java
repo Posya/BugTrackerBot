@@ -1,35 +1,32 @@
 package site.kiselev.usersession.state;
 
-import com.google.common.base.Strings;
 import com.joestelmach.natty.DateGroup;
 import com.joestelmach.natty.ParseLocation;
 import com.joestelmach.natty.Parser;
-import site.kiselev.task.Task;
-import site.kiselev.usersession.Config;
-import site.kiselev.usersession.Result;
+import org.junit.Before;
+import org.junit.Test;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
-import static site.kiselev.task.Task.ROOT_ID;
+import static org.junit.Assert.*;
 
 /**
- * State to set or delete reminder
+ * Created by posya on 7/25/16.
  */
-class ReminderState extends State {
-    ReminderState(Config config, long id) {
-        super(config, id);
+public class ReminderStateTest {
+    @Before
+    public void setUp() throws Exception {
+
     }
 
-    @Override
-    Result getResult() {
-
+    @Test
+    public void nattyTest() throws Exception {
         Parser parser = new Parser();
-        List<DateGroup> groups = parser.parse("the day before next thursday");
+        List<DateGroup> groups = parser.parse("write a book next monday morning");
         for(DateGroup group : groups) {
+            String prefix = group.getFullText().substring(0, group.getAbsolutePosition());
             List dates = group.getDates();
             int line = group.getLine();
             int column = group.getPosition();
@@ -39,6 +36,7 @@ class ReminderState extends State {
             boolean isRecurreing = group.isRecurring();
             Date recursUntil = group.getRecursUntil();
         }
-        return null;
+
     }
+
 }
