@@ -33,6 +33,8 @@ class ReminderRunnable implements Runnable {
         logger.trace("Checking for new reminders");
 
         long timestamp = new Date().getTime();
+        logger.trace("Current timestamp: {}", timestamp);
+
         Set<String> reminderStrings = datastore.zRangeLessThen(REMINDERS_KEY, timestamp);
 
         List<Reminder> reminders = reminderStrings.stream()

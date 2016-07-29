@@ -14,8 +14,9 @@ import static site.kiselev.task.Task.ROOT_ID;
  */
 abstract public class State {
 
-    static final String TASK_DONE_SIGN   = "☑";
-    static final String TASK_ACTIVE_SIGN = "☐";
+    static final String TASK_DONE_SIGN      = "☒";
+    static final String TASK_ACTIVE_SIGN    = "☐";
+    static final String SUB_TASK_SIGN     = "⤷";
 
 
     private Pattern p = Pattern.compile("^/([A-Za-z]+)(\\d+)?(\\s+.*)?$");
@@ -80,6 +81,8 @@ abstract public class State {
                 return new FindState(config, args);
             case "tree":
                 return new TreeState(config, cmdID);
+            case "test":
+                return new TestState(config, cmdID);
         // Can't be done with id = ROOT_ID
             default:
                 if (cmdID == ROOT_ID) return new WrongState(this);
@@ -89,7 +92,7 @@ abstract public class State {
                     case "edit":
                         return new EditState(config, cmdID);
                     case "reminder":
-                        return new ReminderState(config, cmdID);
+                        return new ReminderState(config, cmdID, args);
 
                 // Do something and returns self
                     default:

@@ -5,6 +5,7 @@ import com.google.gson.JsonSyntaxException;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -27,6 +28,18 @@ public class Task {
 
     transient private Consumer<Task> saver;
     transient private Task root;
+
+    transient private BiConsumer<NotifyAbout, Task> notifier;
+
+    public enum NotifyAbout {
+        CHANGE_SUBJECT,
+        CHANGE_DESCRIPTION,
+        ADD_SUB_TASK,
+        DELETE_SUB_TASK,
+        CHANGE_STATE,
+        CHANGE_REMINDER,
+        DELETE_REMINDER
+    }
 
     /**
      * Default constructor
@@ -99,6 +112,7 @@ public class Task {
     public Task setSubj(String subj) {
         if (id == ROOT_ID) throw new RuntimeException("Wrong call setSubj with id == ROOT_ID");
         this.subj = subj;
+        notify(NotifyAbout.CHANGE_SUBJECT);
         return this;
     }
 
@@ -163,7 +177,9 @@ public class Task {
             throw new IllegalStateException(String.format("Can't add task %s to %s", task, this));
         this.subTasks.add(task);
         task.setSaver(this.saver);
+        task.setNotifier(notifier);
         task.setRoot(this.root);
+        notify(NotifyAbout.ADD_SUB_TASK);
         return this;
     }
 
@@ -179,7 +195,9 @@ public class Task {
             throw new IllegalStateException(String.format("Can't add tasks %s to %s", list, this));
         this.subTasks.addAll(list);
         list.forEach(t -> t.setSaver(this.saver));
+        list.forEach(t -> t.setNotifier(this.notifier));
         list.forEach(t -> t.setRoot(this.root));
+        notify(NotifyAbout.ADD_SUB_TASK);
         return this;
     }
 
@@ -201,6 +219,7 @@ public class Task {
     public Task setDescription(String description) {
         if (id == ROOT_ID) throw new RuntimeException("Wrong call setDescription with id == ROOT_ID");
         this.description = description;
+        notify(NotifyAbout.CHANGE_DESCRIPTION);
         return this;
     }
 
@@ -219,6 +238,7 @@ public class Task {
         checkState(state);
         setSubStates(state);
         this.state = state;
+        notify(NotifyAbout.CHANGE_STATE);
         return this;
     }
 
@@ -286,6 +306,7 @@ public class Task {
         if (reminder == REMINDER_NOT_SET)
             throw new IllegalStateException("Reminder can't be equal REMINDER_NOT_SET");
         this.reminder = reminder;
+        notify(NotifyAbout.CHANGE_REMINDER);
         return this;
     }
 
@@ -300,6 +321,7 @@ public class Task {
         if (!isReminderSet())
             throw new IllegalStateException("Couldn't clear reminder: it wasn't set");
         this.reminder = REMINDER_NOT_SET;
+        notify(NotifyAbout.DELETE_REMINDER);
         return this;
     }
 
@@ -437,6 +459,7 @@ public class Task {
 
     private void removeSubTask(Task task) {
         subTasks.remove(task);
+        notify(NotifyAbout.DELETE_SUB_TASK);
     }
 
     private void checkState(State state) throws IllegalStateException {
@@ -504,5 +527,22 @@ public class Task {
 
     public Map<Long, Task> getReminders() {
         return root.getRemindersRecursive();
+    }
+
+    public BiConsumer<NotifyAbout, Task> getNotifier() {
+        return notifier;
+    }
+
+    public void setNotifier(BiConsumer<NotifyAbout, Task> notifier) {
+        this.notifier = notifier;
+        for (Task task : subTasks) {
+            task.setNotifier(notifier);
+        }
+
+    }
+
+    private void notify(NotifyAbout about) {
+        if (notifier == null) return;
+        notifier.accept(about, this);
     }
 }

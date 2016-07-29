@@ -5,6 +5,7 @@ package site.kiselev.textparser;
  */
 public enum SentenceType {
     TEXT,
+    KEYWORD,
     NUMBER,
     DATE,
     TIME,

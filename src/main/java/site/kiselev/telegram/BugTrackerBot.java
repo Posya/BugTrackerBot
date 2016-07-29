@@ -60,7 +60,7 @@ public final class BugTrackerBot {
         // Starting reminder thread
         ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
         Runnable task = new ReminderRunnable(bot, datastore);
-        executor.scheduleWithFixedDelay(task, 0, 30, TimeUnit.SECONDS);
+        executor.scheduleWithFixedDelay(task, 5, 5, TimeUnit.SECONDS);
 
         // Main loop
         while (!isExit) {

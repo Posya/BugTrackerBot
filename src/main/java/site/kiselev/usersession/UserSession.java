@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import site.kiselev.datastore.Datastore;
 import site.kiselev.task.Task;
+import site.kiselev.telegram.Reminder;
 import site.kiselev.usersession.state.State;
 
 import static site.kiselev.telegram.Reminder.REMINDERS_KEY;
@@ -33,8 +34,14 @@ public class UserSession {
             datastore.set(new String[]{username, "tasks"}, finalTask.toJSON());
             if (t.isReminderSet()) datastore.zAdd(REMINDERS_KEY,
                     t.getReminder(),
-                    "Reminder:\n" + t.getSubj()
+                    new Reminder(t.getReminder(), username, "Reminder: " + t.getSubj()).toJSON()
             );
+        });
+        task.setNotifier((about, t) -> {
+            if (about == Task.NotifyAbout.DELETE_REMINDER) {
+                datastore.zRem(REMINDERS_KEY,
+                        new Reminder(t.getReminder(), username, "Reminder: " + t.getSubj()).toJSON());
+            }
         });
         Config config = new Config(finalTask::findByID);
         state = State.initState(config);

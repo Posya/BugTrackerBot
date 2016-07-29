@@ -1,8 +1,6 @@
 package site.kiselev.textparser;
 
-import com.joestelmach.natty.DateGroup;
-import com.joestelmach.natty.Parser;
-
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -13,17 +11,23 @@ public class TextParser {
 
     private Date date;
     private String subj = "";
+    private List<Sentence> sentences;
 
     public TextParser(String input) {
-        Parser parser = new Parser();
-        List<DateGroup> groups = parser.parse(input);
-        if (groups.size() > 0) {
-            DateGroup group = groups.get(0);
-            subj = group.getFullText().substring(0, group.getAbsolutePosition());
-            if (group.getDates().size() > 0) {
-                date = group.getDates().get(0);
-            }
+        sentences = new ArrayList<>();
+        for (String w : input.split("\\s")) {
+            sentences.add(new Sentence(w, SentenceType.TEXT));
         }
+    }
+
+    public boolean toDigital() {
+//        for (Sentence s : sentences) {
+//            switch (s.getText().toLowerCase()) {
+//                case "понедельник":
+//
+//            }
+//        }
+        return false;
     }
 
     public Date getDate() {
