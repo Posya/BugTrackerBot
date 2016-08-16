@@ -42,6 +42,8 @@ public class ConsoleApp {
         logger.debug("Stopping loop");
     }
 
+
+
     private void processUpdate(String update) {
         logger.trace("Processing update: {}", update);
 
@@ -70,10 +72,6 @@ public class ConsoleApp {
                 System.out.println("");
             }
             System.out.println("==========================================");
-
-//            SendResponse sendResponse = bot.execute(sm);
-
-//            logger.trace("SendResponse: {}", sendResponse);
         } catch (Exception e) {
             logger.error("Error in processing user {}\nmessage {}\n{}", USERNAME, update, e);
             logger.trace(Arrays.toString(e.getStackTrace()));

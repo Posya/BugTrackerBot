@@ -12,6 +12,7 @@ import java.util.List;
  * Tree State
  */
 class TreeState extends State {
+
     TreeState(Config config, long id) {
         super(config, id);
     }
@@ -30,7 +31,7 @@ class TreeState extends State {
 
         if (task.getId() != Task.ROOT_ID) {
             result.add(String.format("%s %s %s /list%d",
-                    Strings.repeat("\t", offset),
+                    Strings.repeat("`     `", offset - 1) + SUB_TASK_SIGN,
                     (task.getState() == site.kiselev.task.State.DONE ? TASK_DONE_SIGN : TASK_ACTIVE_SIGN),
                     task.getSubj(),
                     task.getId()
@@ -39,7 +40,13 @@ class TreeState extends State {
             result.add("*Tasks:*");
         }
 
-        for (Task t : task.getSubTasks()) {
+        List<Task> subTasks = task.getSubTasks();
+        if (subTasks.size() > 0) {
+            for (int i = 0; i < subTasks.size() - 1; i++) {
+                Task t = subTasks.get(i);
+                result.addAll(buildTreeRecursive(t, offset + 1));
+            }
+            Task t = subTasks.get(subTasks.size() - 1);
             result.addAll(buildTreeRecursive(t, offset + 1));
         }
 

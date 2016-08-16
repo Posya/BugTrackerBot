@@ -260,4 +260,30 @@ public class TaskTest {
         Map<Long, Task> reminders = task.getReminders();
         assertEquals(2, reminders.size());
     }
+
+    @Test
+    public void notifyTest() throws Exception {
+        Task root = new Task(ROOT_ID).addSubTask(new Task(1));
+        final boolean[] test = new boolean[1];
+        root.setNotifier((a, b) -> test[0] = true);
+
+        Task task = root.findByID(1);
+
+        test[0] = false;
+        task.setSubj("test");
+        assertTrue(test[0]);
+
+        test[0] = false;
+        task.setDescription("test");
+        assertTrue(test[0]);
+
+        test[0] = false;
+        task.setReminder(1);
+        assertTrue(test[0]);
+
+        test[0] = false;
+        task.done();
+        assertTrue(test[0]);
+    }
+
 }

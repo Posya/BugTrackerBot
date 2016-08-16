@@ -29,11 +29,11 @@ class ListState extends State {
             out.add("*Tasks:*");
         } else {
             List<Task> parents = task.getParents();
-            int i = 0;
+            int i = 1;
             out.add("*Tasks:* /main");
             for (Task t : parents) {
                 out.add(String.format("%s %s %s /list%d",
-                        Strings.repeat(" ", i) + ">",
+                        Strings.repeat("`     `", i - 1) + SUB_TASK_SIGN,
                         (t.getState() == site.kiselev.task.State.DONE ? TASK_DONE_SIGN : TASK_ACTIVE_SIGN),
                         t.getSubj(),
                         t.getId()));
